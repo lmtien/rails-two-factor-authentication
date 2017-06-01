@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @tfa.user %>
+</p>
+
+<p>
+  <strong>Tfa password:</strong>
+  <%= @tfa.tfa_password %>
+</p>
+
+<p>
+  <strong>Attepmted:</strong>
+  <%= @tfa.attepmted %>
+</p>
+
+<%= link_to 'Edit', edit_tfa_path(@tfa) %> |
+<%= link_to 'Back', tfas_path %>
