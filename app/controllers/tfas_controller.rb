@@ -10,7 +10,7 @@ class TfasController < ApplicationController
     # clqstcfmajhgbqmx
     
     @tfas = Tfa.all
-    TfaMailer.tfa_confirmation("test").deliver_now
+    # TfaMailer.tfa_confirmation("test").deliver_now
   end
 
   # GET /tfas/1
