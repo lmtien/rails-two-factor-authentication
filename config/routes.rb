@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  # resources :tfas
-  # resources :users
-
   root 'users#login'
   get 'index' => 'users#login'
   
