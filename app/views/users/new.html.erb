@@ -1,33 +1,41 @@
-<h1>Sign Up</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
 
-<%= form_for(@user, url: sign_up_url, method: :post) do |f| %>
-  <% if @user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
-
-      <ul>
-      <% @user.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+      <h1 class="text-center">Create New Account</h1>
+      
+      <%= form_for(@user, url: sign_up_url, method: :post) do |f| %>
+        <% if @user.errors.any? %>
+          <div class="text-danger">
+            <p>Please check following <%= pluralize(@user.errors.count, "error") %>:</p>
+      
+            <ul>
+              <% @user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      
+        <div class="field form-group">
+          <%= f.label :email, class: "control-label" %><br>
+          <%= f.email_field :email, required: true, class: "form-control", placeholder: "your_email@example.com" %>
+        </div>
+        <div class="field form-group">
+          <%= f.label :password, class: "control-label" %><br>
+          <%= f.password_field :password, required: true, class: "form-control" %>
+        </div>
+        <div class="field form-group">
+          <%= f.label :password_confirmation, class: "control-label" %><br>
+          <%= f.password_field :password_confirmation, required: true, class: "form-control" %>
+        </div>
+        <div class="actions">
+          <%= f.submit "Sign Up", class: "btn btn-success pull-right" %>
+        </div>
       <% end %>
-      </ul>
+      
+      <%= link_to 'Already have account?', login_url %>
+      
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :email %><br>
-    <%= f.email_field :email, required: true %>
   </div>
-  <div class="field">
-    <%= f.label :password %><br>
-    <%= f.password_field :password, required: true %>
-  </div>
-  <div class="field">
-    <%= f.label :password_confirmation %><br>
-    <%= f.password_field :password_confirmation, required: true %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
-
-<%= link_to 'Already have account?', login_url %>
+</div>

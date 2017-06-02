@@ -1,80 +1,54 @@
 class TfasController < ApplicationController
-  before_action :set_tfa, only: [:show, :edit, :update, :destroy]
-
-  # GET /tfas
-  # GET /tfas.json
-  def index
-    # @tfas = Tfa.new(user_id: 1)
-    # @tfas.tfa_password = "tien"
-    # @tfas.save!
-    # clqstcfmajhgbqmx
+  def verify_2fa
+    redirect_to login_url, alert: 'You must login first!' if !session[:user_id]
     
-    @tfas = Tfa.all
-    # TfaMailer.tfa_confirmation("test").deliver_now
+    @tfa = Tfa.new(user_id: session[:user_id]) unless !session[:user_id]
   end
 
-  # GET /tfas/1
-  # GET /tfas/1.json
-  def show
-  end
+  def verify_2fa_code
+    @tfa = Tfa.find_by_user_id(tfa_params[:user_id])
 
-  # GET /tfas/new
-  def new
-    @tfa = Tfa.new
-  end
-
-  # GET /tfas/1/edit
-  def edit
-  end
-
-  # POST /tfas
-  # POST /tfas.json
-  def create
-    @tfa = Tfa.new(tfa_params)
-
-    respond_to do |format|
-      if @tfa.save
-        format.html { redirect_to @tfa, notice: 'Tfa was successfully created.' }
-        format.json { render :show, status: :created, location: @tfa }
+    if (Time.current - @tfa.created_at) < 10
+      flash.clear
+      flash[:alert] = "Two Factor code attemps too soon!"
+      render :verify_2fa
+    elsif (Time.current - @tfa.created_at) > 120
+        clear_session
+        flash.clear
+        flash[:alert] = "Two Factor code has been expired, please login again!"
+        render :verify_message
+        
+    elsif @tfa.tfa_password == tfa_params[:tfa_code]
+      clear_session
+      flash.clear
+      flash[:notice] = "Login successfully! Enjoy your time :)"
+      render :verify_message
+    else
+      @tfa.attepmted += 1
+      @tfa.save!
+      
+      if @tfa.attepmted > 2
+        clear_session
+        flash.clear
+        flash[:alert] = "Account locked due to too many failed login attempts!"
+        render :verify_message
       else
-        format.html { render :new }
-        format.json { render json: @tfa.errors, status: :unprocessable_entity }
+        flash.clear
+        flash[:alert] = "The code is invalid. You've atempted #{@tfa.attepmted} #{"time".pluralize(@tfa.attepmted)}."
+        render :verify_2fa
       end
-    end
-  end
-
-  # PATCH/PUT /tfas/1
-  # PATCH/PUT /tfas/1.json
-  def update
-    respond_to do |format|
-      if @tfa.update(tfa_params)
-        format.html { redirect_to @tfa, notice: 'Tfa was successfully updated.' }
-        format.json { render :show, status: :ok, location: @tfa }
-      else
-        format.html { render :edit }
-        format.json { render json: @tfa.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /tfas/1
-  # DELETE /tfas/1.json
-  def destroy
-    @tfa.destroy
-    respond_to do |format|
-      format.html { redirect_to tfas_url, notice: 'Tfa was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_tfa
-      @tfa = Tfa.find(params[:id])
-    end
-
     # Never trust parameters from the scary internet, only allow the white list through.
     def tfa_params
-      params.require(:tfa).permit(:user_id, :tfa_password, :attepmted)
+      params.require(:tfa).permit(:user_id, :tfa_code)
+    end
+    
+    def clear_session
+      # Clear everything for current session
+      session[:user_id] = nil
+      @tfa.destroy!
     end
 end

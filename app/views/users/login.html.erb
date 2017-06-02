@@ -1,19 +1,32 @@
-<h1>Login</h1>
-
-<p id="notice"><%= notice %></p>
-
-<%= form_for(@user, url: login_url, method: :post) do |f| %>
-  <div class="field">
-    <%= f.label :email %><br>
-    <%= f.email_field :email, required: true %>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      
+      <h1 class="text-center">Welcome to 2FA</h1>
+      
+      <% if alert %>
+        <p class="notice bg-danger text-danger"><%= alert %></p>
+      <% end %>
+      <% if notice %>
+        <p class="notice bg-success text-success"><%= notice %></p>
+      <% end %>
+      
+      <%= form_for(@user, url: login_url, method: :post) do |f| %>
+        <div class="field form-group">
+          <%= f.label :email, class: "control-label" %><br>
+          <%= f.email_field :email, required: true, class: "form-control", placeholder: "your_email@example.com" %>
+        </div>
+        <div class="field form-group">
+          <%= f.label :password, class: "control-label" %><br>
+          <%= f.password_field :password, required: true, class: "form-control" %>
+        </div>
+        <div class="actions">
+          <%= f.submit "Login", class: "btn btn-primary pull-right" %>
+        </div>
+      <% end %>
+      
+      <%= link_to 'Create new account?', sign_up_url %>
+      
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :password %><br>
-    <%= f.password_field :password, required: true %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
-
-<%= link_to 'Create new account?', sign_up_url %>
+</div>

@@ -12,15 +12,24 @@ class UsersController < ApplicationController
       # Create 2FA Code
       tfas = Tfa.new(user_id: @user.id)
       tfas.tfa_password = code
+      tfas.attepmted = 0
       tfas.save!
       
       # Send the code to email
       TfaMailer.tfa_confirmation(@user.email, code).deliver_now
       
-      render json: 'ok'
+      # Set cookie
+      session[:user_id] = @user.id
+      
+      redirect_to verify_url, notice: 'An email with verification code has been sent to your email address. Please check your email and enter the code.'
     else
       @user = User.new(user_params)
-      flash[:notice] = "Wrong email or password."
+      
+      # Clear cookie
+      session[:user_id] = nil
+      
+      flash.clear
+      flash[:alert] = 'Email or password invalid.'
       render :login
     end
   end

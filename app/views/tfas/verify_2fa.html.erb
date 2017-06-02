@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      
+      <h1 class="text-center">2-F-A</h1>
+      
+      <% if alert %>
+        <p class="notice bg-danger text-danger"><%= alert %></p>
+      <% end %>
+      <% if notice %>
+        <p class="notice bg-success text-success"><%= notice %></p>
+      <% end %>
+      
+      <%= form_for(@tfa, url: verify_url, method: :post) do |f| %>
+        <div class="field">
+          <%= f.hidden_field :user_id %>
+        </div>
+        <div class="field form-group">
+          <%= f.label :tfa_code, "Enter your code", class: "control-label" %><br>
+          <%= f.text_field :tfa_code, required: true, class: "form-control" %>
+        </div>
+        <div class="actions">
+          <%= f.submit "Verify", class: "btn btn-primary pull-right" %>
+        </div>
+      <% end %>
+      
+    </div>
+  </div>
+</div>

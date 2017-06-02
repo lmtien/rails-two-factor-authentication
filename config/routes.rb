@@ -11,6 +11,6 @@ Rails.application.routes.draw do
   get 'sign_up' => 'users#new'
   post 'sign_up' => 'users#create'
   
-  get 'verify' => 'tfas#verify'
-  post 'verify' => 'tfas#verify_2fa'
+  get 'verify' => 'tfas#verify_2fa'
+  post 'verify' => 'tfas#verify_2fa_code'
 end
